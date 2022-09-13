@@ -5,12 +5,13 @@ import SearchList from "./SearchList";
 import icon from '../image/world.png';
 import {Button, Image, Form, Container, Navbar} from 'react-bootstrap'
 
-function Search (props){
+function Search ({ items, loading, error }){
     //this the useState for the search field
     const [searchField, setSearchField]= useState("");
+    const [searchText, setSearchText]= useState(null);
     const inputElement = useRef();
 
-    const filteredNames = props.items.filter(
+    const filteredNames = items.filter(
         data => {
             if (searchField ==""){
                 return data
@@ -22,16 +23,24 @@ function Search (props){
             
         }
     );
+
+    const handleText = (e) => {
+        e.preventDefault();
+        setSearchText(e.target.value)
+    }
+    
     const handleClick = () => {
         setSearchField("");
-        inputElement.current.focus();
-        const searchValue = inputElement.current.value;
+        // inputElement.current.focus();
+        // const searchValue = inputElement.current.value;
+        const searchValue = searchText;
         setSearchField(searchValue)      
     }
 
 
     const handleFilter = e => {
         setSearchField("");
+        setSearchText(null)
         setSearchField(e.target.value);
     };
 
@@ -41,8 +50,8 @@ function Search (props){
             <Scroll>
                 <SearchList 
                 filteredNames = {filteredNames}
-                loading = {props.loading}
-                error = {props.error}
+                loading = {loading}
+                error = {error}
                 />
             </Scroll>
         );
@@ -70,13 +79,16 @@ function Search (props){
                         <Navbar.Collapse id="navbarScroll" className="justify-content-end">
                             <Form className="d-flex">
                                 <Form.Control
-                                    ref = {inputElement}
+                                    // ref = {inputElement}
                                     type="search"
                                     placeholder="Search for country"
                                     className="me-2"
-                                    aria-label="Search"    
+                                    aria-label="Search"  
+                                    name="search"
+                                    value={searchText}
+                                    onChange={handleText}
                                 />
-                                <Button variant="outline-success" onClick = {handleClick}>Search</Button>
+                                <Button variant="outline-success" onClick={handleClick} disabled={!searchText}>Search</Button>
                             </Form>  
                         </Navbar.Collapse>
                         <Navbar.Collapse className="justify-content-end">
